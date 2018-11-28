@@ -68,16 +68,59 @@ func init() {
 	flag.StringVar(&accessKey, "accessKey", "", "Access key of S3 storage.")
 	flag.StringVar(&secretKey, "secretKey", "", "Secret key of S3 storage.")
 	flag.StringVar(&bucket, "bucket", "", "Bucket name which hosts static files.")
-	flag.StringVar(&address, "address", "127.0.0.1:8080", "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname.")
+	flag.StringVar(&address, "address", ":8080", "Bind to a specific ADDRESS:PORT, ADDRESS can be an IP or hostname.")
 	flag.StringVar(&tlsCert, "ssl-cert", "", "TLS certificate for this server.")
 	flag.StringVar(&tlsKey, "ssl-key", "", "TLS private key for this server.")
+
 }
 
 func main() {
 	flag.Parse()
-
+	// 获取bucket
 	if strings.TrimSpace(bucket) == "" {
-		console.Fatalln(`Bucket name cannot be empty, please provide 's3www -bucket "mybucket"'`)
+		bucket = os.Getenv("BUCKET")
+		if strings.TrimSpace(bucket) == "" {
+			console.Fatalln(`Bucket name cannot be empty, please provide 's3www -bucket "mybucket"'`)
+		}
+
+	}
+	// 获取endpoint
+	if strings.TrimSpace(endpoint) == "" {
+		endpoint = os.Getenv("ENDPOINT")
+		if strings.TrimSpace(endpoint) == "" {
+			console.Fatalln(`Endpoint cannot be empty, please provide 's3www -endpoint "myendpoint"'`)
+		}
+	}
+	// 获取accessKey
+	if strings.TrimSpace(accessKey) == "" {
+		accessKey = os.Getenv("ACCESS_KEY")
+		if strings.TrimSpace(accessKey) == "" {
+			console.Fatalln(`accessKey cannot be empty, please provide 's3www -accessKey "myaccessKey"'`)
+		}
+	}
+	// 获取secretKey
+	if strings.TrimSpace(secretKey) == "" {
+		secretKey = os.Getenv("SECRET_KEY")
+		if strings.TrimSpace(secretKey) == "" {
+			console.Fatalln(`secretKey cannot be empty, please provide 's3www -secretKey "mysecretKey"'`)
+		}
+	}
+	// 获取address
+	if strings.TrimSpace(address) == "" {
+		address = os.Getenv("ADDRESS")
+		if strings.TrimSpace(address) == "" {
+			address = ":8080"
+		}
+	}
+	// 获取ssl-cert
+	if strings.TrimSpace(tlsCert) == "" {
+		tlsCert = os.Getenv("TLS_CERT")
+
+	}
+	// 获取ssl-key
+	if strings.TrimSpace(tlsKey) == "" {
+		tlsKey = os.Getenv("TLS_KEY")
+
 	}
 
 	u, err := url.Parse(endpoint)
